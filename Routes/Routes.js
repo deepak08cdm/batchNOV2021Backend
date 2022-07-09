@@ -1,14 +1,32 @@
 const express = require('express')
 const router = express.Router()
+const todolist = []
 
-router.get('/home',(req,res)=>{
-    res.send("this is home")
+router.get('/',(req,res)=>{
+    res.send({TodoList:todolist})
 })
-router.post('/home/:id',(req,res)=>{
-    res.send('welcome '+req.params.id+' to home'+' your details '+JSON.stringify(req.query)+' data we recieved '+JSON.stringify(req.body))
+
+router.post('/add',(req,res)=>{
+    const data = req.body
+    const duplicate = todolist.find((ele)=> ele.id===data.id)
+    if(duplicate){
+        res.send('enter unique id')
+    }
+    else{
+    todolist.push(data)
+    res.send("Data stored successfully")
+    }
 })
-router.put('/edit/:id',(req,res)=>{
-    console.log('this is a put call')
+
+router.get('/:id',(req,res)=>{
+    const id = +req.params.id
+    const data = todolist.find((ele)=> ele.id===id)
+    if(data){
+        res.send(data)
+    }else{
+        res.send('no data exist')
+    }
 })
+
 
 module.exports = router;
