@@ -1,26 +1,31 @@
 const express = require('express')
 const router = express.Router()
-const todolist = []
+const todoList = require('../Model/TodolistSchema')
 
-router.get('/',(req,res)=>{
-    res.send({TodoList:todolist})
+router.get('/',async(req,res)=>{
+    const data = await todoList.find()
+    console.log(data)
+    res.send({TodoList:data})
 })
 
-router.post('/add',(req,res)=>{
-    const data = req.body
-    const duplicate = todolist.find((ele)=> ele.id===data.id)
-    if(duplicate){
-        res.send('enter unique id')
+router.post('/add',async (req,res)=>{ 
+    const data = await todoList.find()
+    const exsisting = data.find((ele)=> ele.id == +req.body.id)
+    if(exsisting){
+        res.send('duplicate data found')
     }
     else{
-    todolist.push(data)
-    res.send("Data stored successfully")
+        const result = await todoList.create(req.body)
+        res.send({
+            message:'data added successfully',
+            data:result
+        })
     }
 })
 
-router.get('/:id',(req,res)=>{
-    const id = +req.params.id
-    const data = todolist.find((ele)=> ele.id===id)
+router.get('/:id',async (req,res)=>{
+    const id = req.params.id
+    const data = await todoList.find({id:id})
     if(data){
         res.send(data)
     }else{
