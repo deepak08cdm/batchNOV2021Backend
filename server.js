@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const Routes = require('./Routes/Routes')
+const cookie = require('cookie-parser')
 const cors = require('cors')
 
 const app = express()
@@ -13,7 +14,11 @@ mongoose.connection
 .on('error', err => console.log('Error with the database!', err));
 
 app.use(cors())
+app.use(cookie())
 app.use(bodyParser.json())
+app.use((req, res, next)=>{
+    next()
+})
 app.use('/',Routes)
 app.listen(4000,()=>{
     console.log('connected to port 4000 and localhost')
